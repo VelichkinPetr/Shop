@@ -19,9 +19,9 @@ class Profile(Base, IDMixin):
     phone: Mapped[str] = mapped_column(String, nullable=False)
     birthday: Mapped[date] = mapped_column(Date, nullable=False)
     photo: Mapped[str] = mapped_column(String, default='')
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
     user: Mapped['User'] = relationship(back_populates='profile')
-    cart: Mapped['Cart'] = relationship(back_populates='profile')
-    order: Mapped[list['Order']] = relationship(back_populates='profile')
-    reviews: Mapped[list['Review']] = relationship(back_populates='profile')
+    cart: Mapped['Cart'] = relationship(back_populates='profile', cascade="all, delete")
+    order: Mapped[list['Order']] = relationship(back_populates='profile', cascade="all, delete-orphan")
+    reviews: Mapped[list['Review']] = relationship(back_populates='profile', cascade="all, delete-orphan")

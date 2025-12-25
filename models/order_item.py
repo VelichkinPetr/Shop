@@ -16,8 +16,8 @@ class OrderItem(Base, IDMixin):
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     cost: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
-    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"))
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete='CASCADE'))
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id", ondelete='CASCADE'))
 
     product: Mapped['Product'] = relationship(back_populates='order_item')
     order: Mapped['Order'] = relationship(back_populates='order_item')

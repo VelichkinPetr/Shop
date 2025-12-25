@@ -19,10 +19,10 @@ class Category(Base, IDMixin):
     description: Mapped[str] = mapped_column(String, default=None)
     photo: Mapped[str] = mapped_column(String, default= '')
     sort: Mapped[int] = mapped_column(Integer, nullable=False)
-    parent_id: Mapped[int] = mapped_column(Integer, ForeignKey('categories.id'), nullable=True)
+    parent_id: Mapped[int] = mapped_column(Integer, ForeignKey('categories.id', ondelete="SET NULL"), nullable=True)
 
     category_parent: Mapped['Category'] = relationship('Category', remote_side='Category.id', back_populates='category_child')
-    category_child: Mapped[list['Category']] = relationship('Category', back_populates='category_parent')
+    category_child: Mapped[list['Category']] = relationship('Category', back_populates='category_parent', cascade="all, delete-orphan")
     
     product: Mapped[list['Product']] = relationship(
         secondary=products_categories,

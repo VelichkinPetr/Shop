@@ -23,7 +23,7 @@ class Order(Base, IDMixin, TimeStampMixin):
 
     status: Mapped[OrderStatus] = mapped_column(Enum(OrderStatus), nullable=False, default= OrderStatus.new)
     total_price: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    profile_id: Mapped[int] = mapped_column(Integer, ForeignKey('profiles.id'))
+    profile_id: Mapped[int] = mapped_column(Integer, ForeignKey('profiles.id', ondelete='CASCADE'))
 
     profile: Mapped['Profile'] = relationship(back_populates='order')
-    order_item: Mapped[list['OrderItem']] = relationship(back_populates='order')
+    order_item: Mapped[list['OrderItem']] = relationship(back_populates='order', cascade="all, delete-orphan")

@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 class UserStatus(enum.Enum):
     admin = 'admin'
     moderator = 'moderator'
+    user = 'user'
 
 class User(Base, IDMixin, TimeStampMixin):
     __tablename__ = 'users'
@@ -23,4 +24,4 @@ class User(Base, IDMixin, TimeStampMixin):
     status: Mapped[UserStatus] = mapped_column(Enum(UserStatus), nullable=False, default= UserStatus.moderator)
     is_admin: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
-    profile: Mapped['Profile'] = relationship(back_populates="user")
+    profile: Mapped['Profile'] = relationship(back_populates="user", cascade="all, delete")

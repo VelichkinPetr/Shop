@@ -15,8 +15,8 @@ class Review(Base, IDMixin):
 
     rate: Mapped[int] = mapped_column(Integer, nullable=False)
     comment: Mapped[str] = mapped_column(Text, nullable=True)
-    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
-    profile_id: Mapped[int] = mapped_column(ForeignKey("profiles.id"))
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
+    profile_id: Mapped[int] = mapped_column(ForeignKey("profiles.id", ondelete="CASCADE"))
     
     # Связи с основной моделью
     profile: Mapped['Profile'] = relationship(back_populates='reviews')

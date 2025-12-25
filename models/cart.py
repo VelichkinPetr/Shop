@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class Cart(Base, IDMixin, TimeStampMixin):
     __tablename__ = 'carts'
 
-    profile_id: Mapped[int] = mapped_column(Integer, ForeignKey('profiles.id'))
+    profile_id: Mapped[int] = mapped_column(Integer, ForeignKey('profiles.id', ondelete='CASCADE'))
 
     profile: Mapped['Profile'] = relationship(back_populates='cart')
-    cart_item: Mapped[list['CartItem']] = relationship(back_populates='cart')
+    cart_item: Mapped[list['CartItem']] = relationship(back_populates='cart', cascade="all, delete-orphan")

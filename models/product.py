@@ -25,6 +25,6 @@ class Product(Base, IDMixin):
         back_populates="product"
     )
 
-    reviews: Mapped[list['Review']] = relationship(back_populates='product')
-    order_item: Mapped[list['OrderItem']] = relationship(back_populates='product')
-    cart_item: Mapped[list['CartItem']] = relationship(back_populates='product')
+    reviews: Mapped[list['Review']] = relationship(back_populates='product', cascade="all, delete-orphan")
+    order_item: Mapped[list['OrderItem']] = relationship(back_populates='product', cascade="all, delete-orphan")
+    cart_item: Mapped[list['CartItem']] = relationship(back_populates='product', cascade="all, delete-orphan")
