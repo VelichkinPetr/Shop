@@ -3,9 +3,10 @@ from sqlalchemy.orm import Session
 
 from api.errors.Exceptions import HTTPError
 from core.security import get_current_user, password_hash
-from database.session import get_db
-from services.user import UserService
+from database import get_db
+from services import UserService
 from schemas import UserUpdate, UserPublic, ProfileUpdate, ProfileRead, UserRead
+
 
 router = APIRouter()
 
@@ -16,13 +17,13 @@ def get_me(user = Depends(get_current_user)):
     return user
 
 @router.put('/me',
-            response_model=UserRead,
+            response_model=UserPublic,
             status_code=status.HTTP_200_OK)
 def update_me(
             user_data: UserUpdate,
             db: Session = Depends(get_db),
             user: UserPublic = Depends(get_current_user)
-):
+) -> UserRead:
     if user_data.password is not None:
         hashed_password = password_hash.hash(user_data.password.get_secret_value())
         user_data.password = hashed_password
@@ -39,7 +40,7 @@ def update_my_profile(
             profile_data: ProfileUpdate,
             db: Session = Depends(get_db),
             user: UserPublic = Depends(get_current_user)
-):
+) -> ProfileRead:
     profile = UserService.update_me_profile(db, user.id, profile_data)
     if profile is None:
         raise HTTPError.not_found
@@ -50,7 +51,7 @@ def update_my_profile(
 def delete_my_profile(
             db: Session = Depends(get_db),
             user: UserPublic = Depends(get_current_user)
-):
+) -> None:
     is_delete = UserService.delete_profile(db, user.id)
     if not is_delete:
         raise HTTPError.not_found
