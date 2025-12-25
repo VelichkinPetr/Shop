@@ -1,11 +1,11 @@
+from fastapi import Depends
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi.params import Depends
-from pwdlib import PasswordHash
 from sqlalchemy.orm import Session
+from pwdlib import PasswordHash
 
-from database.session import get_db
-from services.user import UserService
 from api.errors.Exceptions import HTTPError
+from database import get_db
+from services import UserService
 from schemas import UserPublic
 
 
