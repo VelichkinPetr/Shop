@@ -3,7 +3,7 @@ from api.routers.routers import api_router
 
 def create_api():
 
-    app = FastAPI()
+    app = FastAPI(title='Ecommerce API')
 
     app.include_router(api_router)
 
