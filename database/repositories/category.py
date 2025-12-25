@@ -1,4 +1,4 @@
-from database.repositories.base import BaseRepo
+from database.repositories import BaseRepo
 from models import Category
 
 
