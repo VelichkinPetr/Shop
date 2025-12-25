@@ -5,7 +5,7 @@ from .category import CategoryCreate, CategoryUpdate, Category as CategoryRead
 from .order import OrderCreate, OrderUpdate, Order as OrderRead
 from .cart import CartCreate, Cart as CartRead
 from .reviews import ReviewCreate, ReviewUpdate, Review as ReviewRead
-from .cart_item import CartItemCreate, CartItem as CartItemRead
+from .cart_item import CartItemCreate, CartItemUpdate, CartItem as CartItemRead
 from .order_items import OrderItemCreate, OrderItem as OrderItemRead
 
 __all__ = [
@@ -16,6 +16,6 @@ __all__ = [
     'OrderCreate', 'OrderUpdate', 'OrderRead',
     'CartCreate', 'CartRead',
     'ReviewCreate', 'ReviewUpdate', 'ReviewRead',
-    'CartItemCreate', 'CartItemRead',
+    'CartItemCreate', 'CartItemUpdate', 'CartItemRead',
     'OrderItemCreate', 'OrderItemRead'
 ]
