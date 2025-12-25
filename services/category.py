@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 
-from api.errors.Exceptions import HTTPError
 from database.repositories import CategoryRepo
 from schemas import CategoryRead, CategoryCreate, CategoryUpdate
 
 
 class CategoryService:
+
     category_repo = CategoryRepo
     category_schema = CategoryRead
 
