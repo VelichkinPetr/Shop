@@ -1,10 +1,10 @@
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
 from sqlalchemy import and_, select
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 
 from api.errors.Exceptions import SQLError
 from database.repositories import BaseRepo
-from models import Category, Product
+from models import Category, Product, Review
 
 
 class ProductRepo(BaseRepo):
@@ -20,7 +20,7 @@ class ProductRepo(BaseRepo):
                         max_price: int = None,
                         limit: int = 20,
                         offset: int = 0
-                        ) -> list[Product]:
+    ) -> list[Product]:
 
         query = select(cls.model)# стандартная модель получения данных, !!!без фильтра!!!
 
@@ -45,8 +45,8 @@ class ProductRepo(BaseRepo):
         # добавляем срезы
         query = query.offset(offset).limit(limit)
         # получаем результат
-        products = db.scalars(query).all()#model(SQLalchemy)
-        return products  # list[schema(PDSchema)]
+        products = db.scalars(query).all()
+        return products
 
     @classmethod
     def add_category(cls,
@@ -60,4 +60,20 @@ class ProductRepo(BaseRepo):
             db.refresh(product)
             return product
         except SQLAlchemyError as db_error:
+            db.rollback()
             raise SQLError('Error in',cls.model.__name__, db_error)
+
+    @classmethod
+    def add_review(cls,
+                   db: Session,
+                   product: Product,
+                   review: Review
+    ) -> Product:
+        try:
+            product.reviews.append(review)
+            db.commit()
+            db.refresh(product)
+            return product
+        except SQLAlchemyError as db_error:
+            db.rollback()
+            raise SQLError('Error in', cls.model.__name__, db_error)
