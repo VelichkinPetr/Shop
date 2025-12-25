@@ -4,9 +4,8 @@ from sqlalchemy.orm import Session
 from api.errors.Exceptions import HTTPError
 from core.security import get_current_user, password_hash
 from database import get_db
-from services import UserService
-from schemas import UserUpdate, UserPublic, ProfileUpdate, ProfileRead, UserRead
-
+from services import UserService, CartService
+from schemas import UserUpdate, UserPublic, ProfileUpdate, ProfileRead, UserRead, CartCreate
 
 router = APIRouter()
 
@@ -32,6 +31,22 @@ def update_me(
     if updated_user is None:
         raise HTTPError.not_found
     return updated_user
+
+@router.post('/me/profile',
+             response_model=ProfileRead,
+             status_code=status.HTTP_201_CREATED)
+def create_profile(
+        profile_data: ProfileUpdate,
+        db: Session = Depends(get_db),
+        user: UserPublic = Depends(get_current_user)
+) -> ProfileRead:
+    profile = UserService.create_profile(db, user.id, profile_data)
+    if profile is None:
+        raise HTTPError.exist
+    cart_data = CartCreate(profile_id=profile.id)
+    cart = CartService.create_cart(db, cart_data)
+    return profile
+
 
 @router.put('/me/profile',
             response_model=ProfileRead,
