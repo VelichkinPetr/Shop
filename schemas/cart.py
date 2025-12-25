@@ -1,6 +1,7 @@
-from typing import Optional
 from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict
+
 from schemas.cart_item import CartItem
 
 
