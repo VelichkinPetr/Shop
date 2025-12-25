@@ -1,7 +1,9 @@
 from typing import Optional
+
 from pydantic import BaseModel, ConfigDict
 
-from schemas.category import Category, CategoryUpdate
+from schemas.category import Category
+from schemas.reviews import Review
 
 
 class ProductCreate(BaseModel):
@@ -11,6 +13,7 @@ class ProductCreate(BaseModel):
     detail_text: str
     price: int
     category: list[Category]
+    reviews: list[Review]
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
