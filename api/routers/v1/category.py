@@ -1,20 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from api.errors.Exceptions import HTTPError
-from core.security import get_current_user
+from core.security import get_current_user, get_current_admin
+from database import get_db
+from services import CategoryService
+from schemas import UserPublic, CategoryRead, CategoryCreate, CategoryUpdate
 
-from database.session import get_db
-
-
-from models import User, Category
-from schemas import CategoryRead, CategoryCreate, CategoryUpdate
-
-from services.category import CategoryService
 
 router = APIRouter()
-
-
 
 @router.post('',
              response_model=CategoryRead,
@@ -22,7 +16,7 @@ router = APIRouter()
 def create_category(
     category_data: CategoryCreate,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user)
+    admin: UserPublic = Depends(get_current_admin)
 ) -> CategoryRead:
     new_category = CategoryService.create_category(db, category_data)
     return new_category
@@ -33,18 +27,20 @@ def create_category(
             status_code=status.HTTP_200_OK)
 def list_categories(
         db: Session = Depends(get_db),
-        user: User = Depends(get_current_user)
+        user: UserPublic = Depends(get_current_user)
 ) -> list[CategoryRead]:
     categories = CategoryService.list_categories(db)
     if categories is None:
         raise HTTPError.not_found
     return categories
 
-@router.get('/{category_id}', status_code=status.HTTP_200_OK)
+@router.get('/{category_id}',
+            response_model=CategoryRead,
+            status_code=status.HTTP_200_OK)
 def get_category(
         category_id: int,
         db: Session = Depends(get_db),
-        user: User = Depends(get_current_user)
+        user: UserPublic = Depends(get_current_user)
 ) -> CategoryRead:
     category = CategoryService.get_category(db, category_id)
     if category is None:
@@ -58,7 +54,7 @@ def update_category(
         category_id: int,
         category_data: CategoryUpdate,
         db: Session = Depends(get_db),
-        user: User = Depends(get_current_user)
+        admin: UserPublic = Depends(get_current_admin)
 ) -> CategoryRead:
 
     updated_category = CategoryService.update_category(db,category_id, category_data)
@@ -66,11 +62,12 @@ def update_category(
         raise HTTPError.not_found
     return updated_category
 
-@router.delete('/{category_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{category_id}',
+               status_code=status.HTTP_204_NO_CONTENT)
 def delete_category(
         category_id: int,
         db: Session = Depends(get_db),
-        user: User = Depends(get_current_user)
+        admin: UserPublic = Depends(get_current_admin)
 ):
     is_delete = CategoryService.delete_category(db, category_id)
     if not is_delete:
