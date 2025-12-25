@@ -2,13 +2,10 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from api.errors.Exceptions import HTTPError
-from database import get_db
 from core.security import get_current_user, get_current_admin
-from services.product import ProductService
-
-
-from schemas import ProductRead, ProductUpdate, ProductCreate
-from schemas import UserPublic
+from database import get_db
+from services import ProductService
+from schemas import UserPublic, ProductRead, ProductUpdate, ProductCreate, ReviewRead, ReviewCreate
 
 
 router = APIRouter()
@@ -69,6 +66,32 @@ def update_product(
         raise HTTPError.not_found
     return updated_product
 
+@router.put('/{product_id}/review',
+            response_model=ProductRead,
+            status_code=status.HTTP_202_ACCEPTED)
+def add_review(
+            product_id: int,
+            review_data: ReviewCreate,
+            db: Session = Depends(get_db),
+            user: UserPublic = Depends(get_current_user)
+) -> ProductRead:
+    updated_product = ProductService.add_review(db, user.profile.id, product_id, review_data)
+    if updated_product is None:
+        raise HTTPError.not_found
+    return updated_product
+
+@router.get('/{product_id}/review',
+            response_model=list[ReviewRead],
+            status_code=status.HTTP_200_OK)
+def get_reviews(
+            product_id: int,
+            db: Session = Depends(get_db),
+            user: UserPublic = Depends(get_current_user)
+) -> list[ReviewRead]:
+    reviews = ProductService.get_reviews(db, product_id)
+    if reviews is None:
+        raise HTTPError.not_found
+    return reviews
 
 @router.delete('/{product_id}',
                status_code=status.HTTP_202_ACCEPTED)
