@@ -1,5 +1,6 @@
 from typing import Optional
 from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict
 
 from schemas.order_items import OrderItem
@@ -7,11 +8,12 @@ from models.order import OrderStatus
 
 
 class OrderCreate(BaseModel):
-    status: OrderStatus
-    total_price: int
+    status: Optional[OrderStatus] = None
+    total_price: Optional[int] = None
+    profile_id: int
 
 class OrderUpdate(BaseModel):
-    status: Optional[str] = None
+    status: Optional[OrderStatus] = None
     total_price: Optional[int] = None
     
 class Order(OrderCreate):
@@ -19,6 +21,5 @@ class Order(OrderCreate):
 
     id: int
     order_item: list[OrderItem]
-    profile_id: int
     created_at: datetime
     updated_at: datetime
